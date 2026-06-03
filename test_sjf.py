@@ -1,6 +1,10 @@
 from process import Process
 from scheduler_sjf import sjf
 
+from PyQt6.QtWidgets import QApplication
+from gantt_window import GanttChart
+import sys
+
 processes = [
     Process("P1", 0, 8),
     Process("P2", 1, 4),
@@ -10,13 +14,9 @@ processes = [
 
 gantt = sjf(processes)
 
-print("Gantt Chart:")
-for g in gantt:
-    print(g)
+app = QApplication(sys.argv)
 
-print("\nProcess Metrics:")
+window = GanttChart(gantt)
+window.show()
 
-for p in processes:
-    print(
-        p.pid, "WT:", p.waiting_time, "TAT:", p.turnaround_time, "RT:", p.response_time
-    )
+sys.exit(app.exec())
