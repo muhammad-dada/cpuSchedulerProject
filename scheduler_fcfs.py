@@ -15,8 +15,6 @@ def sort_by_arrival(processes):
 
 def fcfs(processes):
 
-    # Sort by arrival time
-
     sort_by_arrival(processes)
 
     time = 0
@@ -24,25 +22,34 @@ def fcfs(processes):
 
     for p in processes:
 
-        # CPU idle handling
-
+        # CPU idle
         if time < p.arrival_time:
             gantt.append(("IDLE", time, p.arrival_time))
             time = p.arrival_time
 
+        # READY state (process is now in queue and selected)
+        p.state = "READY"
+
         start_time = time
 
-        # response time (first CPU access)
+        # RUNNING state
+        p.state = "RUNNING"
+
+        # response time
         p.response_time = start_time - p.arrival_time
-        
-        #execute process fully 
-        time+= p.burst_time
+
+        time += p.burst_time
+
         p.completion_time = time
-        
-        #Calculate metrics 
-        p.turn_around_time = p.completion_time - p.arrival_time 
-        p.waiting_time = p.turn_around_time - p.burst_time
-        
+
+        # TERMINATED state
+        p.state = "TERMINATED"
+
+        # metrics
+        p.turnaround_time = p.completion_time - p.arrival_time
+        p.turn_around_time = p.turnaround_time
+        p.waiting_time = p.turnaround_time - p.burst_time
+
         gantt.append((p.pid, start_time, time))
-        
-    return gantt
+
+    return processes, gantt
