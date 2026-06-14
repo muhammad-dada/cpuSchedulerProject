@@ -141,12 +141,13 @@ class CPUSchedulerUI(QWidget):
     def build_output_table(self):
 
         self.table = QTableWidget()
-        self.table.setColumnCount(5)
+        self.table.setColumnCount(6)
 
         self.table.setHorizontalHeaderLabels(
             [
                 "PID",
                 "Priority",
+                "Burst Time",
                 "Waiting Time",
                 "Turnaround Time",
                 "Response Time",
@@ -244,9 +245,10 @@ class CPUSchedulerUI(QWidget):
         for i, p in enumerate(processes_copy):
             self.table.setItem(i, 0, QTableWidgetItem(p.pid))
             self.table.setItem(i, 1, QTableWidgetItem(str(p.priority)))
-            self.table.setItem(i, 2, QTableWidgetItem(str(p.waiting_time)))
-            self.table.setItem(i, 3, QTableWidgetItem(str(p.turnaround_time)))
-            self.table.setItem(i, 4, QTableWidgetItem(str(p.response_time)))
+            self.table.setItem(i, 2, QTableWidgetItem(str(p.burst_time)))
+            self.table.setItem(i, 3, QTableWidgetItem(str(p.waiting_time)))
+            self.table.setItem(i, 4, QTableWidgetItem(str(p.turnaround_time)))
+            self.table.setItem(i, 5, QTableWidgetItem(str(p.response_time)))
 
 
 # ---------------- RUN APP ----------------
