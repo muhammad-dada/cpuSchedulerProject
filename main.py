@@ -112,6 +112,9 @@ class CPUSchedulerUI(QWidget):
         self.bt_input = QLineEdit()
         self.bt_input.setPlaceholderText("Burst Time")
 
+        self.priority_input = QLineEdit()
+        self.priority_input.setPlaceholderText("Priority")
+
         self.add_btn = QPushButton("Add Process")
         self.add_btn.clicked.connect(self.add_process)
 
@@ -126,6 +129,7 @@ class CPUSchedulerUI(QWidget):
         input_layout.addWidget(self.pid_input)
         input_layout.addWidget(self.at_input)
         input_layout.addWidget(self.bt_input)
+        input_layout.addWidget(self.priority_input)
         input_layout.addWidget(self.add_btn)
         input_layout.addWidget(self.algo_box)
         input_layout.addWidget(self.run_btn)
@@ -137,9 +141,16 @@ class CPUSchedulerUI(QWidget):
     def build_output_table(self):
 
         self.table = QTableWidget()
-        self.table.setColumnCount(4)
+        self.table.setColumnCount(5)
+
         self.table.setHorizontalHeaderLabels(
-            ["PID", "Waiting Time", "Turnaround Time", "Response Time"]
+            [
+                "PID",
+                "Priority",
+                "Waiting Time",
+                "Turnaround Time",
+                "Response Time",
+            ]
         )
 
         self.table.setStyleSheet("""
@@ -167,14 +178,17 @@ class CPUSchedulerUI(QWidget):
         try:
             at = int(self.at_input.text())
             bt = int(self.bt_input.text())
+            priority_text = self.priority_input.text().strip()
+            priority = int(priority_text) if priority_text else 0
         except:
             return
 
-        self.processes.append(Process(pid, at, bt))
+        self.processes.append(Process(pid, at, bt, priority))
 
         self.pid_input.clear()
         self.at_input.clear()
         self.bt_input.clear()
+        self.priority_input.clear()
 
     # ---------------- RESET ----------------
     def reset_all(self):
@@ -195,7 +209,8 @@ class CPUSchedulerUI(QWidget):
         algo = self.algo_box.currentText()
 
         processes_copy = [
-            Process(p.pid, p.arrival_time, p.burst_time) for p in self.processes
+            Process(p.pid, p.arrival_time, p.burst_time, p.priority)
+            for p in self.processes
         ]
 
         if algo == "FCFS":
@@ -228,9 +243,10 @@ class CPUSchedulerUI(QWidget):
 
         for i, p in enumerate(processes_copy):
             self.table.setItem(i, 0, QTableWidgetItem(p.pid))
-            self.table.setItem(i, 1, QTableWidgetItem(str(p.waiting_time)))
-            self.table.setItem(i, 2, QTableWidgetItem(str(p.turnaround_time)))
-            self.table.setItem(i, 3, QTableWidgetItem(str(p.response_time)))
+            self.table.setItem(i, 1, QTableWidgetItem(str(p.priority)))
+            self.table.setItem(i, 2, QTableWidgetItem(str(p.waiting_time)))
+            self.table.setItem(i, 3, QTableWidgetItem(str(p.turnaround_time)))
+            self.table.setItem(i, 4, QTableWidgetItem(str(p.response_time)))
 
 
 # ---------------- RUN APP ----------------
